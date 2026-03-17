@@ -18,15 +18,5 @@
 
 <br />
 
-## 🚀 Getting Started
-```bash
-git clone https://github.com/luceatlee/Concertory.git
-cd concertory
-npm install
-npm run dev
-```
-
-<br />
-
 ## 📌 Status
 🚧 In Progress
