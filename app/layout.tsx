@@ -3,6 +3,8 @@ import { Bebas_Neue, Cormorant_Garamond, Inter, Noto_Sans_KR } from "next/font/g
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import Script from "next/script";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
 const bebasNeue = Bebas_Neue({
   weight: "400",
@@ -44,7 +46,9 @@ export default function RootLayout({
       <body
         className={`${bebasNeue.variable} ${cormorantGaramond.variable} ${inter.variable} ${notoSansKR.variable}`}
       >
+        <Header />
         {children}
+        <Footer />
         <Analytics />
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-T5BL59SYTY"

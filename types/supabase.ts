@@ -322,7 +322,6 @@ export type Database = {
           sing_along_event: string | null
           slogan_event: string | null
           song_id: string | null
-          video_url: string | null
         }
         Insert: {
           concert_id?: string | null
@@ -335,7 +334,6 @@ export type Database = {
           sing_along_event?: string | null
           slogan_event?: string | null
           song_id?: string | null
-          video_url?: string | null
         }
         Update: {
           concert_id?: string | null
@@ -348,7 +346,6 @@ export type Database = {
           sing_along_event?: string | null
           slogan_event?: string | null
           song_id?: string | null
-          video_url?: string | null
         }
         Relationships: [
           {
@@ -444,6 +441,60 @@ export type Database = {
             columns: ["setlist_item_id"]
             isOneToOne: false
             referencedRelation: "setlist_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      song_videos: {
+        Row: {
+          created_at: string
+          id: string
+          is_auto_hidden: boolean
+          platform: string | null
+          report_count: number
+          setlist_item_id: string
+          status: string
+          submitted_by: string | null
+          title: string | null
+          video_url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_auto_hidden?: boolean
+          platform?: string | null
+          report_count?: number
+          setlist_item_id: string
+          status?: string
+          submitted_by?: string | null
+          title?: string | null
+          video_url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_auto_hidden?: boolean
+          platform?: string | null
+          report_count?: number
+          setlist_item_id?: string
+          status?: string
+          submitted_by?: string | null
+          title?: string | null
+          video_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "song_videos_setlist_item_id_fkey"
+            columns: ["setlist_item_id"]
+            isOneToOne: false
+            referencedRelation: "setlist_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "song_videos_submitted_by_fkey"
+            columns: ["submitted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -574,6 +625,45 @@ export type Database = {
           seat_map_url?: string | null
         }
         Relationships: []
+      }
+      video_reports: {
+        Row: {
+          created_at: string
+          id: string
+          reason: string | null
+          reported_by: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reported_by: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reason?: string | null
+          reported_by?: string
+          video_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_reports_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_reports_video_id_fkey"
+            columns: ["video_id"]
+            isOneToOne: false
+            referencedRelation: "song_videos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
