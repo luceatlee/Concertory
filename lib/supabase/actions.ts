@@ -53,3 +53,31 @@ export async function createSong(formData: FormData) {
   if (error) throw error
   revalidatePath('/admin/master')
 }
+
+// 영상 승인 (status: hidden → active)
+export async function approveVideo(videoId: string) {
+  'use server'
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('song_videos')
+    .update({ status: 'active', is_auto_hidden: false })
+    .eq('id', videoId)
+
+  if (error) throw error
+  revalidatePath('/admin/reports')
+}
+
+// 영상 삭제 (status → deleted)
+export async function deleteVideo(videoId: string) {
+  'use server'
+  const supabase = await createClient()
+
+  const { error } = await supabase
+    .from('song_videos')
+    .update({ status: 'deleted' })
+    .eq('id', videoId)
+
+  if (error) throw error
+  revalidatePath('/admin/reports')
+}
