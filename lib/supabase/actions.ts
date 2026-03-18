@@ -81,3 +81,28 @@ export async function deleteVideo(videoId: string) {
   if (error) throw error
   revalidatePath('/admin/reports')
 }
+
+// 공연 등록
+export async function createConcert(formData: FormData) {
+  'use server'
+  const supabase = await createClient()
+
+  const { error } = await supabase.from('concerts').insert({
+    artist_id: formData.get('artist_id') as string,
+    title: formData.get('title') as string,
+    tour_name: formData.get('tour_name') as string || null,
+    date: formData.get('date') as string,
+    venue: formData.get('venue') as string,
+    city: formData.get('city') as string,
+    country: formData.get('country') as string,
+    total_duration_min: formData.get('total_duration_min')
+      ? Number(formData.get('total_duration_min'))
+      : null,
+    day_sequence: formData.get('day_sequence')
+      ? Number(formData.get('day_sequence'))
+      : 1,
+  })
+
+  if (error) throw error
+  revalidatePath('/admin/concerts')
+}

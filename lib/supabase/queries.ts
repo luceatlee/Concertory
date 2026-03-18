@@ -97,3 +97,16 @@ export async function getVideoReports() {
   if (error) throw error
   return data
 }
+
+// 공연 전체 조회 (관리자용)
+export async function getConcerts() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('concerts')
+    .select('*, artists(name)')
+    .order('date', { ascending: false })
+
+  if (error) throw error
+  return data
+}
