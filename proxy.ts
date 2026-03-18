@@ -33,14 +33,14 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // 관리자 페이지 접근 시 로그인 여부 확인
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!user) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/login'
-      return NextResponse.redirect(url)
-    }
-  }
+  // // 관리자 페이지 접근 시 로그인 여부 확인
+  // if (request.nextUrl.pathname.startsWith('/admin')) {
+  //   if (!user) {
+  //     const url = request.nextUrl.clone()
+  //     url.pathname = '/login'
+  //     return NextResponse.redirect(url)
+  //   }
+  // }
 
   return supabaseResponse
 }
