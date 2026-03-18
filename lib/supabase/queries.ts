@@ -77,3 +77,23 @@ export async function getRecentReports() {
   if (error) throw error
   return data
 }
+
+// 제보 리스트 전체 조회 (관리자용)
+export async function getVideoReports() {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('song_videos')
+    .select(`
+      *,
+      setlist_items (
+        order_num,
+        concerts ( title, date ),
+        songs ( title )
+      )
+    `)
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data
+}
