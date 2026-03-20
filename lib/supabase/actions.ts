@@ -106,3 +106,59 @@ export async function createConcert(formData: FormData) {
   if (error) throw error
   revalidatePath('/admin/concerts')
 }
+
+// 세트리스트 항목 추가
+export async function createSetlistItem(formData: FormData) {
+  'use server'
+  const supabase = await createClient()
+
+  const { error } = await supabase.from('setlist_items').insert({
+    concert_id: formData.get('concert_id') as string,
+    song_id: formData.get('song_id') as string,
+    order_num: Number(formData.get('order_num')),
+    section: formData.get('section') as string || '메인',
+    outfit_description: formData.get('outfit_description') as string || null,
+    slogan_event: formData.get('slogan_event') as string || null,
+    sing_along_event: formData.get('sing_along_event') as string || null,
+  })
+
+  if (error) throw error
+  revalidatePath('/admin/master')
+}
+
+// 다른 공연에서 세트리스트 복사
+export async function copySetlistFromConcert(formData: FormData) {
+  'use server'
+  const supabase = await createClient()
+
+  const target_concert_id = formData.get('target_concert_id') as string
+  const source_concert_id = formData.get('source_concert_id') as string
+
+  // 원본 세트리스트 가져오기
+  const { data: sourceSetlist, error: fetchError } = await supabase
+    .from('setlist_items')
+    .select('*')
+    .eq('concert_id', source_concert_id)
+    .order('order_num')
+
+  if (fetchError) throw fetchError
+  if (!sourceSetlist || sourceSetlist.length === 0) throw new Error('복사할 세트리스트가 없습니다.')
+
+  // 대상 공연에 복사 (곡 순서/섹션만, 의상/이벤트는 제외)
+  const { error: insertError } = await supabase
+    .from('setlist_items')
+    .insert(
+      sourceSetlist.map((item) => ({
+        concert_id: target_concert_id,
+        song_id: item.song_id,
+        order_num: item.order_num,
+        section: item.section,
+        outfit_description: null,
+        slogan_event: null,
+        sing_along_event: null,
+      }))
+    )
+
+  if (insertError) throw insertError
+  revalidatePath('/admin/master/setlist')
+}

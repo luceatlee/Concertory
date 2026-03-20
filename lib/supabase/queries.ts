@@ -110,3 +110,69 @@ export async function getConcerts() {
   if (error) throw error
   return data
 }
+
+// 세트리스트 조회 (공연별)
+export async function getSetlistByConcert(concertId: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('setlist_items')
+    .select('*, songs(title)')
+    .eq('concert_id', concertId)
+    .order('order_num')
+
+  if (error) throw error
+  return data
+}
+
+// 다음 순서 번호 자동 계산
+export async function getNextOrderNum(concertId: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('setlist_items')
+    .select('order_num')
+    .eq('concert_id', concertId)
+    .order('order_num', { ascending: false })
+    .limit(1)
+
+  if (error) throw error
+  return data.length > 0 ? data[0].order_num + 1 : 1
+}
+
+// 아티스트 관련 그룹 ID 찾기
+export async function getRelatedArtistIds(artistId: string) {
+  const supabase = await createClient()
+
+  // 해당 아티스트 정보 확인
+  const { data: artist } = await supabase
+    .from('artists')
+    .select('type, name_en')
+    .eq('id', artistId)
+    .single()
+
+  if (artist?.type !== 'solo') return [artistId]
+
+  // 솔로 아티스트 이름으로 멤버 테이블에서 소속 그룹 찾기
+  const { data: members } = await supabase
+    .from('members')
+    .select('artist_id')
+    .ilike('name_en', `%${artist.name_en}%`)
+
+  const groupIds = members?.map((m) => m.artist_id) ?? []
+  return [artistId, ...groupIds]
+}
+
+// 아티스트 관련 곡 전체 조회 (본인 + 소속 그룹)
+export async function getSongsByArtistIds(artistIds: string[]) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('songs')
+    .select('*, artists(name)')
+    .in('artist_id', artistIds)
+    .order('title')
+
+  if (error) throw error
+  return data
+}

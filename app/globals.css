@@ -85,3 +85,19 @@ body {
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
 }
+
+/* 콤보박스 스타일 */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+select option {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
