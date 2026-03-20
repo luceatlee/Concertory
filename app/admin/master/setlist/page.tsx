@@ -15,7 +15,7 @@ export default async function AdminSetlistPage({
     ? await Promise.all([
         getSetlistByConcert(concert_id),
         getNextOrderNum(concert_id),
-        getRelatedArtistIds(selectedConcert?.artist_id ?? '').then(getSongsByArtistIds),
+        getRelatedArtistIds(selectedConcert?.artist_id ?? '').then((ids) => getSongsByArtistIds(ids.filter((id): id is string => id !== null))),
       ])
     : [[], 1, []]
 
