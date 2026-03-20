@@ -176,3 +176,31 @@ export async function getSongsByArtistIds(artistIds: string[]) {
   if (error) throw error
   return data
 }
+
+// slug로 아티스트 정보 조회
+export async function getArtistBySlug(slug: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('artists')
+    .select('*')
+    .eq('slug', slug)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+// 아티스트별 공연 목록 조회 (투어명으로 그룹핑용)
+export async function getConcertsByArtist(artistId: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('concerts')
+    .select('*')
+    .eq('artist_id', artistId)
+    .order('date', { ascending: false })
+
+  if (error) throw error
+  return data
+}
