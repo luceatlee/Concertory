@@ -204,3 +204,17 @@ export async function getConcertsByArtist(artistId: string) {
   if (error) throw error
   return data
 }
+
+// 공연 상세 정보 조회
+export async function getConcertById(concertId: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('concerts')
+    .select('*, artists(name, slug, theme_color)')
+    .eq('id', concertId)
+    .single()
+
+  if (error) throw error
+  return data
+}
