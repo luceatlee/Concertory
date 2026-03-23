@@ -90,7 +90,7 @@ export async function createConcert(formData: FormData) {
   const { error } = await supabase.from('concerts').insert({
     artist_id: formData.get('artist_id') as string,
     title: formData.get('title') as string,
-    tour_name: formData.get('tour_name') as string || null,
+    tour_name: (formData.get('tour_name') as string)?.trim() || null,
     date: formData.get('date') as string,
     venue: formData.get('venue') as string,
     city: formData.get('city') as string,
