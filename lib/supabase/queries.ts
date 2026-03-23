@@ -287,3 +287,17 @@ export async function getSongVideos(itemId: string) {
   if (error) throw error
   return data
 }
+
+// 최근 공연 리스트 (메인 홈용)
+export async function getRecentConcerts(limit = 10) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('concerts')
+    .select('*, artists(name, slug, theme_color)')
+    .order('date', { ascending: false })
+    .limit(limit)
+
+  if (error) throw error
+  return data
+}
