@@ -301,3 +301,26 @@ export async function getRecentConcerts(limit = 10) {
   if (error) throw error
   return data
 }
+
+// 현재 로그인한 사용자 정보 조회
+export async function getCurrentUser() {
+  const supabase = await createClient()
+
+  const { data: { user }, error } = await supabase.auth.getUser()
+  if (error || !user) return null
+  return user
+}
+
+// 내 참석 공연 리스트 조회
+export async function getMyConcertLogs(userId: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('my_concert_logs')
+    .select('*, concerts(title, date, venue, city, artist_id, artists(name, slug))')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data
+}
