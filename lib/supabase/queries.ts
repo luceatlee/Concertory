@@ -218,3 +218,72 @@ export async function getConcertById(concertId: string) {
   if (error) throw error
   return data
 }
+
+// 세트리스트 항목 단건 조회 (곡 상세용)
+export async function getSetlistItemById(itemId: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('setlist_items')
+    .select(`
+      *,
+      songs ( * ),
+      concerts ( title, date, venue, city, artist_id,
+        artists ( name, slug, theme_color )
+      )
+    `)
+    .eq('id', itemId)
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+// 이 곡이 등장한 다른 공연들
+export async function getOtherAppearances(songId: string, currentItemId: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('setlist_items')
+    .select(`
+      id, order_num,
+      concerts ( id, title, date, tour_name, artist_id,
+        artists ( slug )
+      )
+    `)
+    .eq('song_id', songId)
+    .neq('id', currentItemId)
+    .order('id')
+
+  if (error) throw error
+  return data
+}
+
+// 곡별 한 줄 후기 조회
+export async function getSongComments(itemId: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('song_comments')
+    .select('*')
+    .eq('setlist_item_id', itemId)
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data
+}
+
+// 곡별 현장 영상 조회
+export async function getSongVideos(itemId: string) {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('song_videos')
+    .select('*')
+    .eq('setlist_item_id', itemId)
+    .eq('status', 'active')
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data
+}
