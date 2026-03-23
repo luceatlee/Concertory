@@ -56,8 +56,8 @@ export default async function SongPage({
         ) : (
           comments.map((comment) => (
             <div key={comment.id}>
-              <p>{comment.users?.nickname} — {comment.content}</p>
-              <p>{comment.created_at?.slice(0, 10)}</p>
+                <p>{comment.content}</p>
+                <p>{comment.created_at?.slice(0, 10)}</p>
             </div>
           ))
         )}
