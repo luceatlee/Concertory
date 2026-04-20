@@ -302,6 +302,22 @@ export async function getRecentConcerts(limit = 10) {
   return data
 }
 
+// 앞으로의 공연 오름차순 정렬
+export async function getUpcomingConcerts(limit = 5) {
+  const supabase = await createClient()
+  const today = new Date().toISOString().split('T')[0]  // YYYY-MM-DD
+
+  const { data, error } = await supabase
+    .from('concerts')
+    .select('*, artists(name, slug, theme_color)')
+    .gte('date', today)          // 오늘 이후 공연만
+    .order('date', { ascending: true })   // 가까운 날짜 순
+    .limit(limit)
+
+  if (error) throw error
+  return data
+}
+
 // 현재 로그인한 사용자 정보 조회
 export async function getCurrentUser() {
   const supabase = await createClient()
@@ -317,7 +333,7 @@ export async function getMyConcertLogs(userId: string) {
 
   const { data, error } = await supabase
     .from('my_concert_logs')
-    .select('*, concerts(title, date, venue, city, artist_id, artists(name, slug))')
+    .select('*, concerts(title, date, venue, city, artist_id, artists(name, slug, theme_color))')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
 
